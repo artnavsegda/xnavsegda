@@ -1,4 +1,5 @@
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -55,17 +56,19 @@ int main(int argc, char *argv[])
 		case KeyPress:
 			XLookupString(&e.xkey,buf,100,NULL,NULL);
 			printf("keypress %s\n",buf);
-			if (XK_q == XLookupKeysym (&e.xkey, 0))
+			switch(XLookupKeysym (&e.xkey, 0))
 			{
+			case XK_q:
 				XCloseDisplay(d);
 				exit(0);
+				break;
 			}
 			break;
 		case ClientMessage:
 			XCloseDisplay(d);
 			exit(0);
 			break;
-		case  ButtonPress:
+		case ButtonPress:
 			break;
 		}
 	}

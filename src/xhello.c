@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 	wa.background_pixel = WhitePixel(d, s);
 	wa.override_redirect = 0;
 	wa.event_mask = ExposureMask | KeyPressMask;
-	w = XCreateWindow(d, RootWindow(d, s), 10, 10, 100, 100, 1, DefaultDepth(d, s),InputOutput,CopyFromParent,CWBackPixel | CWBorderPixel,&wa);
+	w = XCreateWindow(d, RootWindow(d, s), 10, 10, 300, 300, 1, DefaultDepth(d, s),InputOutput,CopyFromParent,CWBackPixel | CWBorderPixel,&wa);
 	//w = XCreateSimpleWindow(d, RootWindow(d, s), 10, 10, 100, 100, 1, BlackPixel(d, s), WhitePixel(d, s));
 	XSelectInput(d, w, ExposureMask | KeyPressMask | ButtonPressMask | StructureNotifyMask);
 	XMapWindow(d, w);
@@ -42,30 +42,33 @@ int main(int argc, char *argv[])
 	{
 		XNextEvent(d, &e);
 		//printf("event %d\n",r++);
-		if (e.type == ConfigureNotify)
+		switch(e.type)
 		{
+		case ConfigureNotify:
 			//printf("structure %d %d %d\n",x++,e.xconfigure.width,e.xconfigure.height);
-		}
-		if (e.type == Expose)
-		{
+			break;
+		case Expose:
 			printf("expose %d %d %d %d %d\n",i++,e.xexpose.x,e.xexpose.y,e.xexpose.width,e.xexpose.height);
-			XFillRectangle(d, w, DefaultGC(d, s), 20, 20, 10, 10);
+			XFillRectangle(d, w, DefaultGC(d, s), 75, 75, 150, 150);
 			//XDrawString(d, w, DefaultGC(d, s), 10, 50, msg, strlen(msg));
-		}
-		if (e.type == KeyPress)
-		{
+			break;
+		case KeyPress:
 			XLookupString(&e.xkey,buf,100,NULL,NULL);
 			printf("keypress %s\n",buf);
 			if (XK_q == XLookupKeysym (&e.xkey, 0))
-				break;
+			{
+				XCloseDisplay(d);
+				exit(0);
+			}
+			break;
+		case ClientMessage:
+			XCloseDisplay(d);
+			exit(0);
+			break;
+		case  ButtonPress:
+			break;
 		}
-		if (e.type == ClientMessage)
-			break;
-		if (e.type == ButtonPress)
-			break;
 	}
- 
-	XCloseDisplay(d);
 	return 0;
 }
 

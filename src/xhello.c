@@ -69,6 +69,23 @@ int main(int argc, char *argv[])
 			exit(0);
 			break;
 		case ButtonPress:
+			printf("buttonpress %d %d\n",e.xbutton.x,e.xbutton.y);
+			switch(e.xbutton.button)
+			{
+			case Button1:
+				break;
+			case Button2:
+				break;
+			case Button3:
+				break;
+			case Button4:
+				printf("wheel up\n");
+				break;
+			case Button5:
+				if (e.xbutton.state & ControlMask)
+					printf("wheel down\n");
+				break;
+			}
 			break;
 		}
 	}
